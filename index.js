@@ -92,6 +92,9 @@ function matrixArray(rows,columns){
   var oidsGivenPattern = ['1.3.6.1.2.1.31.1.1.1.10.']
   var testOidsNum = 2
   var iter =0
+  var crm = 8630
+  var firstCycle = true
+  var notPop = true
 
   var allItemsGivenAVGToAll =  []
   var allItemsTakenAVGToAll =  []
@@ -104,22 +107,69 @@ var d=  new setInterval(()=>{
             console.log(e);
         } else {
             if(snmp.isVarbindError(v[iter])){
-                console.error(snmp.varbindError(v[iter]));
-                oidsTaken.pop()
-                oidsGiven.pop()
-                oidsName.pop()
-                oidsStatus.pop()
-                //console.log(oidsGiven);
-                allItemsTaken = matrixArray(oidsTaken.length, 0)
-                allItemsGiven = matrixArray(oidsTaken.length, 0)
-                clearInterval(d)
+                if(firstCycle){
+                    console.error(snmp.varbindError(v[iter]));
+                    oidsTaken.pop()
+                    oidsGiven.pop()
+                    oidsName.pop()
+                    oidsStatus.pop()
+                    firstCycle = false
+                    //console.log(oidsGiven);
+                    // allItemsTaken = matrixArray(oidsTaken.length, 0) //
+                    // allItemsGiven = matrixArray(oidsTaken.length, 0) //
+                    //clearInterval(d)
+                    //console.log(oidsTaken.length);
+                    iter--
+                    testOidsNum = crm
+                } else if(!firstCycle){
+                    if(notPop){
+                        oidsTaken.pop()
+                        oidsGiven.pop()
+                        oidsName.pop()
+                        oidsStatus.pop()
+                        notPop = false
+                    }
+
+                    testOidsNum ++
+                    
+
+                    console.log(oidsTaken.length);
+                    allItemsTaken = matrixArray(oidsTaken.length, 0) //
+                    allItemsGiven = matrixArray(oidsTaken.length, 0) //
+                    iter--
+                    
+
+                }
+             
             } else{
-                iter++
+                //iter++
                 testOidsNum ++
-                oidsTaken.push(oidsTakenPattern+ testOidsNum)
-                oidsGiven.push(oidsGivenPattern+ testOidsNum)
-                oidsName.push(oidsNamePattern+ testOidsNum)
-                oidsStatus.push(oidsStatusPattern+ testOidsNum)
+                    if(firstCycle){
+                        console.log('sdf');
+                        iter++
+                       
+                        oidsTaken.push(oidsTakenPattern+ testOidsNum)
+                        oidsGiven.push(oidsGivenPattern+ testOidsNum)
+                        oidsName.push(oidsNamePattern+ testOidsNum)
+                        oidsStatus.push(oidsStatusPattern+ testOidsNum)
+                    } else if (!firstCycle){
+                        iter++
+                        console.log(oidsName.length);
+                        notPop = true
+                        oidsTaken.push(oidsTakenPattern+ testOidsNum)
+                        oidsGiven.push(oidsGivenPattern+ testOidsNum)
+                        oidsName.push(oidsNamePattern+ testOidsNum)
+                        oidsStatus.push(oidsStatusPattern+ testOidsNum)
+                        console.log(v);
+                        allItemsTaken = matrixArray(oidsTaken.length, 0) //
+                        allItemsGiven = matrixArray(oidsTaken.length, 0) //
+                        //console.log(v);
+                        // oidsTaken.push(oidsTakenPattern+ testOidsNum)
+                        // oidsGiven.push(oidsGivenPattern+ testOidsNum)
+                        // oidsName.push(oidsNamePattern+ testOidsNum)
+                        // oidsStatus.push(oidsStatusPattern+ testOidsNum)
+                        
+                    }
                 //console.log(oidsGiven);
             }
         }
@@ -129,16 +179,16 @@ var d=  new setInterval(()=>{
 },100)
     
 function get (){
-
+    clearInterval(d)
     
-    //console.log(allItemsTaken);
+    console.log(allItemsTaken);
     const sessionName = snmp.createSession('172.16.16.100', 'public', options)
 
     sessionName.get(oidsName, (e,v)=>{
         if (e){
             console.log(e);
         } else {
-            for (var i = 0; i < oidsName.length; i++){
+            for (var i = 0; i < oidsName.length-1; i++){
                 names[i] = v[i].value.toString()
                 //console.log(names);
             }
@@ -291,5 +341,5 @@ function get (){
     }
 }
 
-setInterval(()=>get(), 5000)
+setInterval(()=>get(), 15000)
  
