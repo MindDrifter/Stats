@@ -37,6 +37,7 @@ app.get('/', (req, res)=>{
 })
 var idToDel = 0
 var delayToDel = 0
+var done = false
 
 var allItemsGivenAVGTo= []
 var allItemsTakenAVGTo= []
@@ -122,23 +123,22 @@ var d=  new setInterval(()=>{
                     iter--
                     testOidsNum = crm
                 } else if(!firstCycle){
+                    console.error(snmp.varbindError(v[iter]));
                     if(notPop){
                         oidsTaken.pop()
                         oidsGiven.pop()
                         oidsName.pop()
                         oidsStatus.pop()
                         notPop = false
+                        iter-- 
                     }
 
                     testOidsNum ++
-                    
 
                     console.log(oidsTaken.length);
                     allItemsTaken = matrixArray(oidsTaken.length, 0) //
                     allItemsGiven = matrixArray(oidsTaken.length, 0) //
-                    iter--
                     
-
                 }
              
             } else{
@@ -177,11 +177,14 @@ var d=  new setInterval(()=>{
     })
 
 },100)
+
+
     
 function get (){
-    clearInterval(d)
+  console.log('sdf');
+  clearInterval(d)
     
-    console.log(allItemsTaken);
+    //console.log(allItemsTaken);
     const sessionName = snmp.createSession('172.16.16.100', 'public', options)
 
     sessionName.get(oidsName, (e,v)=>{
@@ -203,7 +206,7 @@ function get (){
         if (e){
             console.log(e);
         } else {
-            for (var i = 0; i < oidsStatus.length; i++){
+            for (var i = 0; i < oidsStatus.length-1; i++){
                 statusCode[i] = v[i].value
             }
         }
@@ -217,14 +220,14 @@ function get (){
         if (e){
             console.log(e);
         } else {
-            for (var i = 0; i < oidsTaken.length; i++){
+            for (var i = 0; i < oidsTaken.length-1; i++){
                  if(counterTaken <= 4 && counterTaken!==-1){
-                    allItemsTaken[i][counterTaken] = (((parseInt(v[i].value.toString('hex'),16) - prevIn[i]) / 8 / 1024) /5).toFixed(2)
-                    prevIn[i] = parseInt(v[i].value.toString('hex'),16)
+                    allItemsTaken[i][counterTaken] = (((parseFloat(v[i].value.toString('hex'),16) - prevIn[i]) / 8 / 1024) /5).toFixed(2)
+                    prevIn[i] = parseFloat(v[i].value.toString('hex'),16)
                     
                  }else if (counterTaken > 4){
                      counterTaken = 2
-                     for (var c = 0; c < oidsTaken.length; c++ ){
+                     for (var c = 0; c < oidsTaken.length-1; c++ ){
                          allItemsTakenAVG[c] = ((parseFloat(allItemsTaken[c][0])+parseFloat(allItemsTaken[c][1])+parseFloat(allItemsTaken[c][2])+parseFloat(allItemsTaken[c][3])+parseFloat(allItemsTaken[c][4])) / 5).toFixed(2)
                          allItemsTakenAVGTo[c] = allItemsTakenAVG[c]
                          allItemsTaken[c][0] = allItemsTaken[c][2]
@@ -255,16 +258,16 @@ function get (){
                     
             //     } 
             else {
-                for (var i = 0; i < oidsGiven.length; i++){
+                for (var i = 0; i < oidsGiven.length-1; i++){
                     // console.log((((parseInt(v[i].value.toString('hex'),16) - prevIn[i]) / 8 / 1024) /5).toFixed(2));
                     
                     if(counterGiven <= 4 && counterGiven!==-1){
-                    allItemsGiven[i][counterGiven] = (((parseInt(v[i].value.toString('hex'),16) - prevOut[i]) / 8 / 1024) /5).toFixed(2)
-                    prevOut[i] = parseInt(v[i].value.toString('hex'),16)
+                    allItemsGiven[i][counterGiven] = (((parseFloat(v[i].value.toString('hex'),16) - prevOut[i]) / 8 / 1024) /5).toFixed(2)
+                    prevOut[i] = parseFloat(v[i].value.toString('hex'),16)
                     
                     }else if (counterGiven > 4){
                         counterGiven = 2
-                        for (var c = 0; c < oidsGiven.length; c++ ){
+                        for (var c = 0; c < oidsGiven.length-1; c++ ){
                             allItemsGivenAVG[c] = ((parseFloat(allItemsGiven[c][0])+parseFloat(allItemsGiven[c][1])+parseFloat(allItemsGiven[c][2])+parseFloat(allItemsGiven[c][3])+parseFloat(allItemsGiven[c][4])) / 5).toFixed(2)
                             allItemsGivenAVGTo[c] = allItemsGivenAVG[c]
                             allItemsGiven[c][0] = allItemsGiven[c][2]
@@ -320,7 +323,9 @@ function get (){
          allItemsTakenAVGTo2 = chache3
          allItemsGivenAVGToAll.push(chache2)
          allItemsTakenAVGToAll.push(chache3)
-
+         
+         console.log(allItemsTakenAVGToAll[allItemsGivenAVGToAll.length-1]);
+         console.log(allItemsGivenAVGToAll[allItemsGivenAVGToAll.length-1]);
          if (allItemsGivenAVGToAll.length > 20){
              allItemsGivenAVGToAll.splice(0, 1)
              allItemsTakenAVGToAll.splice(0, 1)
@@ -341,5 +346,7 @@ function get (){
     }
 }
 
-setInterval(()=>get(), 15000)
+
+
+setInterval(()=>get(), 10000)
  

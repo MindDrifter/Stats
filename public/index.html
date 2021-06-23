@@ -8,6 +8,8 @@
 </head>
 <body>
   <div id="mainContainer">
+    <div id="onlineContainer"></div>
+    <div id="offlineContainer"></div>
     <!-- <h1> TRUNK PORT to LOCAL NETWORK Core SW</h1>
     <span id="status1" style="font-size: 30px;"></span>
     <div id="container" style="width:100%; height:400px;"></div>
@@ -29,7 +31,7 @@ var dataAll =[];
 var charts = [];
 var status = [];
 var rendered = false;
-var firstTime = true
+var firstRender = true;
 // var takenAllC = []
 // var giveAllC =[]
 
@@ -196,6 +198,8 @@ function get() {
           
           charts[j].series[0].addPoint([x, parseFloat(dataAll.dataTaken[j])], true, true);
           charts[j].series[1].addPoint([x, parseFloat(dataAll.dataGiven[j])], true, true);
+          console.log(dataAll.dataTaken);
+          console.log(dataAll.dataGiven);
           
           
           //document.getElementById('status'+j).innerHTML= dataAll.status[j] == 1?'онлайн':'оффлайн'
@@ -203,12 +207,22 @@ function get() {
           document.getElementById('status'+index).innerHTML= dataAll.status[j] == 1?'онлайн':'оффлайн'
           if(document.getElementById('status'+index).innerHTML === 'онлайн'){
             document.getElementById('status'+index).style.color = 'green'
+            if(firstRender){
+              document.getElementById('onlineContainer').append(document.getElementById('status'+index))
+              document.getElementById('onlineContainer').append(document.getElementById('container'+index))
+            }
+
           }else{
             document.getElementById('status'+index).style.color = 'red'
+            if(firstRender){
+              document.getElementById('offlineContainer').append(document.getElementById('status'+index))
+              document.getElementById('offlineContainer').append(document.getElementById('container'+index))
+            }
           }
-          
+         
           //console.log(document.getElementById('status'+j));
         }
+        firstRender = false
       }
     }).then(()=>{
       if(!rendered){
