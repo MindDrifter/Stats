@@ -206,15 +206,16 @@ function get() {
           var index = j+1
           document.getElementById('status'+index).innerHTML= dataAll.status[j] == 1?'онлайн':'оффлайн'
           if(document.getElementById('status'+index).innerHTML === 'онлайн'){
-            document.getElementById('status'+index).style.color = 'green'
+            
             if(firstRender){
+              document.getElementById('status'+index).style.color = 'green'
               document.getElementById('onlineContainer').append(document.getElementById('status'+index))
               document.getElementById('onlineContainer').append(document.getElementById('container'+index))
             }
 
           }else{
-            document.getElementById('status'+index).style.color = 'red'
             if(firstRender){
+              document.getElementById('status'+index).style.color = 'red'
               document.getElementById('offlineContainer').append(document.getElementById('status'+index))
               document.getElementById('offlineContainer').append(document.getElementById('container'+index))
             }
