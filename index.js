@@ -222,8 +222,8 @@ function get (){
         } else {
             for (var i = 0; i < oidsTaken.length-1; i++){
                  if(counterTaken <= 4 && counterTaken!==-1){
-                    allItemsTaken[i][counterTaken] = (((parseFloat(v[i].value.toString('hex'),16) - prevIn[i]) / 8 / 1024) /5).toFixed(2)
-                    prevIn[i] = parseFloat(v[i].value.toString('hex'),16)
+                    allItemsTaken[i][counterTaken] = (((parseInt(v[i].value.toString('hex'),16) - prevIn[i]) / 8 / 1024) /5).toFixed(2)
+                    prevIn[i] = parseInt(v[i].value.toString('hex'),16)
                     
                  }else if (counterTaken > 4){
                      counterTaken = 2
@@ -262,8 +262,8 @@ function get (){
                     // console.log((((parseInt(v[i].value.toString('hex'),16) - prevIn[i]) / 8 / 1024) /5).toFixed(2));
                     
                     if(counterGiven <= 4 && counterGiven!==-1){
-                    allItemsGiven[i][counterGiven] = (((parseFloat(v[i].value.toString('hex'),16) - prevOut[i]) / 8 / 1024) /5).toFixed(2)
-                    prevOut[i] = parseFloat(v[i].value.toString('hex'),16)
+                    allItemsGiven[i][counterGiven] = (((parseInt(v[i].value.toString('hex'),16) - prevOut[i]) / 8 / 1024) /5).toFixed(2)
+                    prevOut[i] = parseInt(v[i].value.toString('hex'),16)
                     
                     }else if (counterGiven > 4){
                         counterGiven = 2
